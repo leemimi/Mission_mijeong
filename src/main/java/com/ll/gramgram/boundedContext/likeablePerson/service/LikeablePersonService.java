@@ -49,6 +49,11 @@ public class LikeablePersonService {
                 .attractiveTypeCode(attractiveTypeCode) // 1=외모, 2=능력, 3=성격
                 .build();
 
+        //테스트 5번 구현
+        if(member.getInstaMember().getFromLikeablePeople().size()>=10){
+            return RsData.of("F-1", "등록한 상대가 10명입니다! 호감상대를 삭제하고 다시시도하세요!");
+        }
+
         //테스트 4번 구현
         if(member.getInstaMember().getFromLikeablePeople().stream()
                 .anyMatch(lp -> lp.getToInstaMember().getUsername().equals(username))){
