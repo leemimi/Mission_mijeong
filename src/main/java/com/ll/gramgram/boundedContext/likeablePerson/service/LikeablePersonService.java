@@ -49,9 +49,9 @@ public class LikeablePersonService {
                 .attractiveTypeCode(attractiveTypeCode) // 1=외모, 2=능력, 3=성격
                 .build();
 
-        //기능구현4번
+        //테스트 4번 구현
         if(member.getInstaMember().getFromLikeablePeople().stream()
-                .map(likeablePerson1 -> likeablePerson1.getFromInstaMember().getUsername().equals(username)).count()>0){
+                .anyMatch(lp -> lp.getToInstaMember().getUsername().equals(username))){
             return RsData.of("F-1", "이미 호감등록한 상대입니다!");
         }
 
