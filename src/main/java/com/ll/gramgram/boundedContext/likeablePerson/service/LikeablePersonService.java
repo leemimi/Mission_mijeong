@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -34,6 +35,8 @@ public class LikeablePersonService {
             return RsData.of("F-1", "본인을 호감상대로 등록할 수 없습니다.");
         }
 
+
+
         InstaMember fromInstaMember = member.getInstaMember();
         InstaMember toInstaMember = instaMemberService.findByUsernameOrCreate(username).getData();
 
@@ -45,6 +48,12 @@ public class LikeablePersonService {
                 .toInstaMemberUsername(toInstaMember.getUsername()) // 중요하지 않음
                 .attractiveTypeCode(attractiveTypeCode) // 1=외모, 2=능력, 3=성격
                 .build();
+
+        //기능구현4번
+        if(member.getInstaMember().getFromLikeablePeople().stream()
+                .map(likeablePerson1 -> likeablePerson1.getFromInstaMember().getUsername().equals(username)).count()>0){
+            return RsData.of("F-1", "이미 호감등록한 상대입니다!");
+        }
 
         likeablePersonRepository.save(likeablePerson); // 저장
         // 너가 좋아하는 호감표시 생겼어.
