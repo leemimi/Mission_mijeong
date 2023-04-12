@@ -35,8 +35,6 @@ public class LikeablePersonService {
             return RsData.of("F-1", "본인을 호감상대로 등록할 수 없습니다.");
         }
 
-
-
         InstaMember fromInstaMember = member.getInstaMember();
         InstaMember toInstaMember = instaMemberService.findByUsernameOrCreate(username).getData();
 
@@ -55,6 +53,11 @@ public class LikeablePersonService {
         }
 
         //테스트 4번 구현
+        if(member.getInstaMember().getFromLikeablePeople().stream()
+                .anyMatch(lp -> lp.getToInstaMember().getUsername().equals(username))){
+            return RsData.of("F-1", "이미 호감등록한 상대입니다!");
+        }
+
         if(member.getInstaMember().getFromLikeablePeople().stream()
                 .anyMatch(lp -> lp.getToInstaMember().getUsername().equals(username))){
             return RsData.of("F-1", "이미 호감등록한 상대입니다!");
