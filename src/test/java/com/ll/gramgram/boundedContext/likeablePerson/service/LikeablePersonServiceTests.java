@@ -2,23 +2,32 @@ package com.ll.gramgram.boundedContext.likeablePerson.service;
 
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
+import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
+import net.bytebuddy.build.BuildLogger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
 public class LikeablePersonServiceTests {
+
     @Autowired
     private LikeablePersonService likeablePersonService;
+    @Autowired
+    private LikeablePersonRepository likeablePersonRepository;
 
     @Test
     @DisplayName("테스트 1")
@@ -126,5 +135,21 @@ public class LikeablePersonServiceTests {
             System.out.println("v4 : 이미 나(인스타아이디 : insta_user3)는 insta_user4에게 호감을 표시 했구나.");
             System.out.println("v4 : 기존 호감사유 : %s".formatted(oldLikeablePerson.getAttractiveTypeDisplayName()));
         }
+    }
+
+    @Test
+    @Transactional
+    @Rollback(value = false)
+    @DisplayName("코드 바꾸기")
+    public void modifyingTest() {
+        Long id = 1L;
+        int attractiveTypeCode = 2;
+
+        int updatedCount = likeablePersonRepository.updateAttractiveTypeCode(id, attractiveTypeCode);
+        assertEquals(1, updatedCount);
+
+        LikeablePerson person = likeablePersonRepository.findById(id).orElse(null);
+        assertNotNull(person);
+        assertEquals(attractiveTypeCode, person.getAttractiveTypeCode());
     }
 }

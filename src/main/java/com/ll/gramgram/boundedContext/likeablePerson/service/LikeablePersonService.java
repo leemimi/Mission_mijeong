@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -52,18 +53,17 @@ public class LikeablePersonService {
             return RsData.of("F-1", "등록한 상대가 10명입니다! 호감상대를 삭제하고 다시시도하세요!");
         }
 
-        //테스트 4번 구현
-        if(member.getInstaMember().getFromLikeablePeople().stream()
-                .anyMatch(lp -> lp.getToInstaMember().getUsername().equals(username))){
-            return RsData.of("F-1", "이미 호감등록한 상대입니다!");
-        }
 
         if(member.getInstaMember().getFromLikeablePeople().stream()
                 .anyMatch(lp -> lp.getToInstaMember().getUsername().equals(username))){
-            return RsData.of("F-1", "이미 호감등록한 상대입니다!");
+            likeablePerson.setAttractiveTypeCode(attractiveTypeCode);
+            likeablePerson.setModifyDate(LocalDateTime.now());
+
+            return RsData.of("S-2", "호감사유를 변경합니다.");
         }
 
-        likeablePersonRepository.save(likeablePerson); // 저장
+        likeablePersonRepository.save(likeablePerson);
+
         // 너가 좋아하는 호감표시 생겼어.
         fromInstaMember.addFromLikeablePerson(likeablePerson);
 
@@ -79,6 +79,12 @@ public class LikeablePersonService {
     public Optional<LikeablePerson> findById(Long id) {
         return likeablePersonRepository.findById(id);
     }
+
+//    @Transactional
+//    public void modify(LikeablePerson likeablePerson,int attractiveTypeCode){
+//        likeablePerson.setModifyDate(LocalDateTime.now());
+//        likeablePerson.setAttractiveTypeCode(attractiveTypeCode);
+//    }
 
     @Transactional
     public RsData delete(LikeablePerson likeablePerson) {
