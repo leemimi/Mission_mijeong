@@ -48,12 +48,12 @@ public class LikeablePersonService {
                 .attractiveTypeCode(attractiveTypeCode) // 1=외모, 2=능력, 3=성격
                 .build();
 
-        //테스트 5번 구현
+        //케이스 5번 구현
         if(member.getInstaMember().getFromLikeablePeople().size()>=10){
             return RsData.of("F-1", "등록한 상대가 10명입니다! 호감상대를 삭제하고 다시시도하세요!");
         }
 
-
+        //케이스 6번 실패 (DB수정이 안됨)
         if(member.getInstaMember().getFromLikeablePeople().stream()
                 .anyMatch(lp -> lp.getToInstaMember().getUsername().equals(username))){
             likeablePerson.setAttractiveTypeCode(attractiveTypeCode);
@@ -80,11 +80,6 @@ public class LikeablePersonService {
         return likeablePersonRepository.findById(id);
     }
 
-//    @Transactional
-//    public void modify(LikeablePerson likeablePerson,int attractiveTypeCode){
-//        likeablePerson.setModifyDate(LocalDateTime.now());
-//        likeablePerson.setAttractiveTypeCode(attractiveTypeCode);
-//    }
 
     @Transactional
     public RsData delete(LikeablePerson likeablePerson) {
