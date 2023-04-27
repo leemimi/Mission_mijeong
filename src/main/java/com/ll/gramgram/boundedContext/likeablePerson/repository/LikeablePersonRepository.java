@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface LikeablePersonRepository extends JpaRepository<LikeablePerson, Long> {
+public interface LikeablePersonRepository extends JpaRepository<LikeablePerson, Long>, LikeablePersonRepositoryCustom {
     List<LikeablePerson> findByFromInstaMemberId(Long fromInstaMemberId);
 
     List<LikeablePerson> findByToInstaMember_username(String username);

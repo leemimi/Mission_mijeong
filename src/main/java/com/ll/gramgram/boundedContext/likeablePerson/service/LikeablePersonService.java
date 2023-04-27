@@ -73,8 +73,8 @@ public class LikeablePersonService {
         String likeCanceledUsername = likeablePerson.getToInstaMember().getUsername();
         return RsData.of("S-1", "%s님에 대한 호감을 취소하였습니다.".formatted(likeCanceledUsername));
     }
-
-    public RsData canDelete(Member actor, LikeablePerson likeablePerson) {
+    //삭제코드
+    public RsData canCancel(Member actor, LikeablePerson likeablePerson) {
         if (likeablePerson == null) return RsData.of("F-1", "이미 삭제되었습니다.");
 
         // 수행자의 인스타계정 번호

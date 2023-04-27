@@ -38,3 +38,5 @@ out/
 
 ### Custon ###
 application-secret.yml
+
+src/main/generated
