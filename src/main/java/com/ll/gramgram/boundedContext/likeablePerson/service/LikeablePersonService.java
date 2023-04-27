@@ -53,14 +53,13 @@ public class LikeablePersonService {
             return RsData.of("F-1", "등록한 상대가 10명입니다! 호감상대를 삭제하고 다시시도하세요!");
         }
 
-        //케이스 6번 실패 (DB수정이 안됨)
-        if(member.getInstaMember().getFromLikeablePeople().stream()
-                .anyMatch(lp -> lp.getToInstaMember().getUsername().equals(username))){
-            likeablePerson.setAttractiveTypeCode(attractiveTypeCode);
-            likeablePerson.setModifyDate(LocalDateTime.now());
-
-            return RsData.of("S-2", "호감사유를 변경합니다.");
-        }
+//        //케이스 6번 실패 (DB수정이 안됨)
+//        if(member.getInstaMember().getFromLikeablePeople().stream()
+//                .anyMatch(lp -> lp.getToInstaMember().getUsername().equals(username))){
+//            likeablePerson.setAttractiveTypeCode(attractiveTypeCode);
+//
+//            return RsData.of("S-2", "호감사유를 변경합니다.");
+//        }
 
         likeablePersonRepository.save(likeablePerson);
 
