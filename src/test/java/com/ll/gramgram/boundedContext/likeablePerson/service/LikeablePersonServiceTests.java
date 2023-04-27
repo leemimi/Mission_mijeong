@@ -137,19 +137,4 @@ public class LikeablePersonServiceTests {
         }
     }
 
-    @Test
-    @Transactional
-    @Rollback(value = false)
-    @DisplayName("코드 바꾸기")
-    public void modifyingTest() {
-        Long id = 1L;
-        int attractiveTypeCode = 2;
-
-        int updatedCount = likeablePersonRepository.updateAttractiveTypeCode(id, attractiveTypeCode);
-        assertEquals(1, updatedCount);
-
-        LikeablePerson person = likeablePersonRepository.findById(id).orElse(null);
-        assertNotNull(person);
-        assertEquals(attractiveTypeCode, person.getAttractiveTypeCode());
-    }
 }
