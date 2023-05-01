@@ -19,10 +19,10 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @MappedSuperclass
 @Getter
 @SuperBuilder
-@ToString
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class BaseEntity {
+@ToString
+public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
