@@ -1,29 +1,33 @@
 package com.ll.gramgram.boundedContext.likeablePerson.service;
 
+import com.ll.gramgram.TestUt;
+import com.ll.gramgram.base.appConfig.AppConfig;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
-import net.bytebuddy.build.BuildLogger;
+import com.ll.gramgram.boundedContext.member.entity.Member;
+import com.ll.gramgram.boundedContext.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class LikeablePersonServiceTests {
-
+    @Autowired
+    private MemberService memberService;
     @Autowired
     private LikeablePersonService likeablePersonService;
     @Autowired
@@ -133,9 +137,129 @@ public class LikeablePersonServiceTests {
 
         if (oldLikeablePerson != null) {
             System.out.println("v4 : 이미 나(인스타아이디 : insta_user3)는 insta_user4에게 호감을 표시 했구나.");
-            System.out.println("v4 : 기존 호감사유 : %s".formatted(oldLikeablePerson.getAttractiveTypeDisplayName()));
+            System.out.printf("v4 : 기존 호감사유 : %s%n", oldLikeablePerson.getAttractiveTypeDisplayName());
         }
     }
 
+    @Test
+    @DisplayName("설정파일에 있는 최대가능호감표시 수 가져오기")
+    void t003() throws Exception {
+        long likeablePersonFromMax = AppConfig.getLikeablePersonFromMax();
 
+        assertThat(likeablePersonFromMax).isEqualTo(10);
+    }
+
+    @Test
+    @DisplayName("테스트 4")
+    void t004() throws Exception {
+        // 좋아하는 사람이 2번 인스타 회원인 `좋아요` 검색
+        /*
+        SELECT l1_0.id,
+        l1_0.attractive_type_code,
+        l1_0.create_date,
+        l1_0.from_insta_member_id,
+        l1_0.from_insta_member_username,
+        l1_0.modify_date,
+        l1_0.to_insta_member_id,
+        l1_0.to_insta_member_username
+        FROM likeable_person l1_0
+        WHERE l1_0.from_insta_member_id = 2
+        */
+        List<LikeablePerson> likeablePeople = likeablePersonRepository.findByFromInstaMemberId(2L);
+
+        // 좋아하는 대상의 아이디가 insta_user100 인 `좋아요`들 만 검색
+        /*
+        SELECT l1_0.id,
+        l1_0.attractive_type_code,
+        l1_0.create_date,
+        l1_0.from_insta_member_id,
+        l1_0.from_insta_member_username,
+        l1_0.modify_date,
+        l1_0.to_insta_member_id,
+        l1_0.to_insta_member_username
+        FROM likeable_person l1_0
+        LEFT JOIN insta_member t1_0
+        ON t1_0.id=l1_0.to_insta_member_id
+        WHERE t1_0.username = "insta_user100";
+        */
+        List<LikeablePerson> likeablePeople2 = likeablePersonRepository.findByToInstaMember_username("insta_user100");
+
+        assertThat(likeablePeople2.get(0).getId()).isEqualTo(2);
+
+        // 좋아하는 사람이 2번 인스타 회원이고, 좋아하는 대상의 인스타아이디가 "insta_user100" 인 `좋아요`
+        /*
+        SELECT l1_0.id,
+        l1_0.attractive_type_code,
+        l1_0.create_date,
+        l1_0.from_insta_member_id,
+        l1_0.from_insta_member_username,
+        l1_0.modify_date,
+        l1_0.to_insta_member_id,
+        l1_0.to_insta_member_username
+        FROM likeable_person l1_0
+        LEFT JOIN insta_member t1_0
+        ON t1_0.id=l1_0.to_insta_member_id
+        WHERE l1_0.from_insta_member_id = 2
+        AND t1_0.username = "insta_user100";
+        */
+        LikeablePerson likeablePerson = likeablePersonRepository.findByFromInstaMemberIdAndToInstaMember_username(2L, "insta_user100");
+
+        assertThat(likeablePerson.getId()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("테스트 5")
+    void t005() throws Exception {
+        LikeablePerson likeablePerson = likeablePersonRepository.findQslByFromInstaMemberIdAndToInstaMember_username(2L, "insta_user4").orElse(null);
+
+        assertThat(likeablePerson.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("설정파일에서 호감표시에 대한 수정쿨타임 가져오기")
+    void t006() throws Exception {
+        System.out.println("likeablePersonModifyCoolTime : " + AppConfig.getLikeablePersonModifyCoolTime());
+        assertThat(AppConfig.getLikeablePersonModifyCoolTime()).isGreaterThan(0);
+    }
+
+    @Test
+    @DisplayName("호감표시를 하면 쿨타임이 지정된다.")
+    void t007() throws Exception {
+        // 현재시점 기준에서 쿨타임이 다 차는 시간을 구한다.(미래)
+        LocalDateTime coolTime = AppConfig.genLikeablePersonModifyUnlockDate();
+
+        Member memberUser3 = memberService.findByUsername("user3").orElseThrow();
+        // 호감표시를 생성한다.
+        // // 호감표시를 생성하면 쿨타임이 미래로 지정된다.
+        LikeablePerson likeablePersonToBts = likeablePersonService.like(memberUser3, "bts", 3).getData();
+
+        // 잘 지정되었는지
+        assertThat(
+                likeablePersonToBts.getModifyUnlockDate().isAfter(coolTime)
+        ).isTrue();
+    }
+
+    @Test
+    @DisplayName("호감사유를 변경하면 쿨타임이 갱신된다.")
+    void t008() throws Exception {
+        // 현재시점 기준에서 쿨타임이 다 차는 시간을 구한다.(미래)
+        LocalDateTime coolTime = AppConfig.genLikeablePersonModifyUnlockDate();
+
+        Member memberUser3 = memberService.findByUsername("user3").orElseThrow();
+        // 호감표시를 생성한다.
+        LikeablePerson likeablePersonToBts = likeablePersonService.like(memberUser3, "bts", 3).getData();
+
+        // 호감표시를 생성하면 쿨타임이 지정되기 때문에, 그래서 바로 수정이 안된다.
+        // 그래서 강제로 쿨타임이 지난것으로 만든다.
+        // 테스트를 위해서 억지로 값을 넣는다.
+        TestUt.setFieldValue(likeablePersonToBts, "modifyUnlockDate", LocalDateTime.now().minusSeconds(-1));
+
+        // 수정을 하면 쿨타임이 갱신된다.
+        likeablePersonService.modifyAttractive(memberUser3, likeablePersonToBts, 1);
+
+        // 갱신 되었는지 확인
+        assertThat(
+                likeablePersonToBts.getModifyUnlockDate().isAfter(coolTime)
+        ).isTrue();
+    }
 }
