@@ -18,16 +18,24 @@ public class LikeablePersonQueryDslRepositoryImp implements LikeablePersonQueryD
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<LikeablePerson> findAllfromInstaMemberGender (Long instamemberId, String gender) {
+    public List<LikeablePerson> findAllfromInstaMemberGender (Long instamemberId, String gender, int attractiveTypeCode) {
         JPAQuery<LikeablePerson> contentQuery = jpaQueryFactory
                 .select(QLikeablePerson.likeablePerson)
                 .from(QLikeablePerson.likeablePerson)
                 .where(QLikeablePerson.likeablePerson.toInstaMember.id.eq(instamemberId).and(
                         eqGender(gender)
-                ));
+                ).and(eqAttractiveTypeCode(attractiveTypeCode))
+                );
 
         List<LikeablePerson> likeablePersonList = contentQuery.fetch();
         return likeablePersonList;
+    }
+
+    private static BooleanExpression eqAttractiveTypeCode (int attractiveTypeCode) {
+        if(attractiveTypeCode == 1 || attractiveTypeCode == 2 || attractiveTypeCode == 3 ){
+            return QLikeablePerson.likeablePerson.attractiveTypeCode.eq(attractiveTypeCode);
+        }
+        return null;
     }
 
     private static BooleanExpression eqGender (String gender) {
@@ -36,6 +44,7 @@ public class LikeablePersonQueryDslRepositoryImp implements LikeablePersonQueryD
         }
         return null;
     }
+
 
 
 }

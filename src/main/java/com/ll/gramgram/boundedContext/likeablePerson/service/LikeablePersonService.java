@@ -223,8 +223,9 @@ public class LikeablePersonService {
         return RsData.of("S-1", "호감사유변경이 가능합니다.");
     }
 
-    public List<LikeablePerson> findAll (Long id, String gender) {
+    public List<LikeablePerson> findAll (Long id, String gender, int attractiveTypeCode) {
 
-        return likeablePersonQueryDslRepository.findAllfromInstaMemberGender(id,gender);
+        return likeablePersonQueryDslRepository.findAllfromInstaMemberGender(id,gender,attractiveTypeCode);
     }
+
 }

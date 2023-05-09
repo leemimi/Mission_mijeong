@@ -6,5 +6,6 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 public interface LikeablePersonQueryDslRepository {
-    List<LikeablePerson> findAllfromInstaMemberGender(Long instmemberId, String gender);
+    List<LikeablePerson> findAllfromInstaMemberGender(Long instaMemberId, String gender,int attractiveTypeCode);
+
 }
