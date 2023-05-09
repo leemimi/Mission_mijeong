@@ -4,6 +4,7 @@ package com.ll.gramgram.boundedContext.likeablePerson.service;
 import com.ll.gramgram.TestUt;
 import com.ll.gramgram.base.appConfig.AppConfig;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
+import com.ll.gramgram.boundedContext.instaMember.service.InstaMemberService;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.ll.gramgram.boundedContext.member.entity.Member;
@@ -33,7 +34,8 @@ public class LikeablePersonServiceTests {
     private LikeablePersonService likeablePersonService;
     @Autowired
     private LikeablePersonRepository likeablePersonRepository;
-
+    @Autowired
+    private InstaMemberService instaMemberService;
     @Test
     @DisplayName("테스트 1")
     void t001() throws Exception {
@@ -263,4 +265,20 @@ public class LikeablePersonServiceTests {
                 likeablePersonToBts.getModifyUnlockDate().isAfter(coolTime)
         ).isTrue();
     }
+
+    @Test
+    @DisplayName("성별 필터링")
+    void t009() throws Exception {
+
+        InstaMember instaMember = instaMemberService.findByUsername("ninizi1122").get();
+
+        String gender = "M";
+
+        Long id = instaMember.getId();
+
+        likeablePersonService.findAll(id, gender);
+
+
+    }
+
 }
