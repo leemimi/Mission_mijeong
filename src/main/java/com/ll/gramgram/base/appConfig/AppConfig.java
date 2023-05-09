@@ -1,7 +1,4 @@
 package com.ll.gramgram.base.appConfig;
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,3 +28,4 @@ public class AppConfig {
         return LocalDateTime.now().plusSeconds(likeablePersonModifyCoolTime);
     }
 }
+
