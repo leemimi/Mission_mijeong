@@ -24,7 +24,7 @@
 - LocalDateTime.now().isBefore(modifyUnlockDate) : 현재 시간이 쿨타임해제 시간보다 전이면 Fail
 
 ### 호감표시 변경 쿨타임 
--위의 삭제 쿨타임과 기능 동일
+-위의 삭제 쿨타임과 기능 동일하다
 
 
 ### 배포 작업
