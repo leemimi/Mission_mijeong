@@ -44,10 +44,94 @@ public interface LikeablePersonQueryDslRepository {
 ```
 - JPAQuery를 사용해서 select, from, where를 통해 성별을 가져온다
 - 이후 뒤의 코드는 추가미션의 호감사유 필터링 구현을 .and()로 처리했다
-- orderBy는 
+- orderBy는 정렬을 위한 코드이다
 
 
+```java
+        private OrderSpecifier<?>[] getOrderSpecifiers(Sort sort) {
 
+        OrderSpecifier[] orderSpecifiers = sort.stream()
+        .map(this::createOrderSpecifier)
+        .toArray(OrderSpecifier[]::new);
+        return orderSpecifiers;
+        }
+
+```
+- 정렬하기위한 코드
+```java
+private OrderSpecifier<?> createOrderSpecifier(Sort.Order o) {
+        Order order = o.getDirection().isDescending() ? Order.DESC : Order.ASC;
+        Expression<?> expression =
+        switch (o.getProperty()) {
+        case "date" -> QLikeablePerson.likeablePerson.fromInstaMember.createDate;
+        case "popularity" -> QLikeablePerson.likeablePerson.fromInstaMember.fromLikeablePeople.size();
+        case "gender" -> QLikeablePerson.likeablePerson.fromInstaMember.gender;
+        case "attractionReason" -> QLikeablePerson.likeablePerson.attractiveTypeCode;
+default-> QLikeablePerson.likeablePerson.fromInstaMember.createDate;
+
+        };
+        return new OrderSpecifier(order, expression);
+        }
+
+```
+- 선택미션을 수행하기 위해 switch문으로 구현했다
+- 잘 안되는 부분이 마지막 호감사유순인데, 호감사유개수를 count하는 과정이 잘 되지 않았다
+
+```java
+      private static BooleanExpression eqAttractiveTypeCode (int attractiveTypeCode) {
+      if(attractiveTypeCode == 1 || attractiveTypeCode == 2 || attractiveTypeCode == 3 ){
+      return QLikeablePerson.likeablePerson.attractiveTypeCode.eq(attractiveTypeCode);
+      }
+      return null;
+      }
+```
+- attractiveTypeCode를 구별하는 코드이다
+```java
+        private static BooleanExpression eqGender (String gender) {
+        if(gender != null && (gender.equals("M")||gender.equals("W"))){
+            return QLikeablePerson.likeablePerson.fromInstaMember.gender.eq(gender);
+        }
+        return null;
+    }
+```
+- 여성, 남성 구별을 가능하게 하는 코드이다
+
+###  LikeablePersonService
+```java
+    public List<LikeablePerson> findAll (Long id, String gender, int attractiveTypeCode, int sortCode) {
+        Sort sort;
+        switch (sortCode) {
+            case 1:
+                sort = Sort.by(Sort.Direction.DESC, "createdAt");
+                break;
+            case 2:
+                sort = Sort.by(Sort.Direction.ASC, "date");
+                break;
+            case 3:
+                sort = Sort.by(Sort.Direction.DESC, "popularity");
+                break;
+            case 4:
+                sort = Sort.by(Sort.Direction.ASC, "popularity");
+                break;
+            case 5:
+                sort = Sort.by(Sort.Direction.DESC,"gender").and(Sort.by("W")).and(Sort.by("M"));
+                break;
+            case 6:
+                sort = Sort.by(Sort.Direction.DESC, "attractionReason").and(Sort.by(String.valueOf(attractiveTypeCode)));
+                break;
+            default:
+                sort = Sort.unsorted();
+                break;
+        }
+
+        return likeablePersonQueryDslRepository.findAllfromInstaMemberGender(id,gender,attractiveTypeCode, sort);
+    }
+```
+- case 1~5, default까지는 잘 구현이 된다
+- case 6이 호감 사유 순 인데 이 부분 구현 동작이 잘 되지 않는다.
 
 
 ### 배포 작업
+- 배포는 계속 실행 부분에서 막힌다
+- java -jar -Dspring.profiles.active=prod build/libs/gramgram-0.0.1-SNAPSHOT.jar
+- DB랑 연동이 잘 안된것 같다!
