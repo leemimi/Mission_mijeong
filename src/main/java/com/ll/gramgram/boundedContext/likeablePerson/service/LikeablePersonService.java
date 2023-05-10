@@ -9,11 +9,11 @@ import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.instaMember.service.InstaMemberService;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonQueryDslRepository;
-import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonQueryDslRepositoryImp;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.ll.gramgram.boundedContext.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -223,9 +223,35 @@ public class LikeablePersonService {
         return RsData.of("S-1", "호감사유변경이 가능합니다.");
     }
 
-    public List<LikeablePerson> findAll (Long id, String gender, int attractiveTypeCode) {
+    public List<LikeablePerson> findAll (Long id, String gender, int attractiveTypeCode, int sortCode) {
+        Sort sort;
+        switch (sortCode) {
+            case 1:
+                sort = Sort.by(Sort.Direction.DESC, "createdAt");
+                break;
+            case 2:
+                sort = Sort.by(Sort.Direction.ASC, "date");
+                break;
+            case 3:
+                sort = Sort.by(Sort.Direction.DESC, "popularity");
+                break;
+            case 4:
+                sort = Sort.by(Sort.Direction.ASC, "popularity");
+                break;
+            case 5:
+                sort = Sort.by(Sort.Direction.DESC,"gender").and(Sort.by("W")).and(Sort.by("M"));
+                break;
+            case 6:
+                sort = Sort.by(Sort.Direction.DESC, "attractionReason").and(Sort.by(String.valueOf(attractiveTypeCode)));
+                break;
+            default:
+                sort = Sort.unsorted();
+                break;
+        }
 
-        return likeablePersonQueryDslRepository.findAllfromInstaMemberGender(id,gender,attractiveTypeCode);
+        return likeablePersonQueryDslRepository.findAllfromInstaMemberGender(id,gender,attractiveTypeCode, sort);
     }
+
+
 
 }
