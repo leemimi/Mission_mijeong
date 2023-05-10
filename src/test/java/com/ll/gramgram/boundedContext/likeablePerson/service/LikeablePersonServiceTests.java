@@ -276,8 +276,6 @@ public class LikeablePersonServiceTests {
 
         Long id = instaMember.getId();
 
-        likeablePersonService.findAll(id, gender);
-
 
     }
 
