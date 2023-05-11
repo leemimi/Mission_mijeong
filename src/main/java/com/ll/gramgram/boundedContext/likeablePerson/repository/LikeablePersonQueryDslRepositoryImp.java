@@ -49,26 +49,23 @@ public class LikeablePersonQueryDslRepositoryImp implements LikeablePersonQueryD
                 case "popularity" -> QLikeablePerson.likeablePerson.fromInstaMember.fromLikeablePeople.size();
                 case "gender" -> QLikeablePerson.likeablePerson.fromInstaMember.gender;
                 case "attractionReason" -> QLikeablePerson.likeablePerson.attractiveTypeCode;
-                default-> QLikeablePerson.likeablePerson.fromInstaMember.createDate;
+                default-> QLikeablePerson.likeablePerson.id;
 
             };
             return new OrderSpecifier(order, expression);
     }
-
+    //호감 필터링
     private static BooleanExpression eqAttractiveTypeCode (int attractiveTypeCode) {
         if(attractiveTypeCode == 1 || attractiveTypeCode == 2 || attractiveTypeCode == 3 ){
             return QLikeablePerson.likeablePerson.attractiveTypeCode.eq(attractiveTypeCode);
         }
         return null;
     }
-
+    //성별 구분
         private static BooleanExpression eqGender (String gender) {
-        if(gender != null && (gender.equals("M")||gender.equals("W"))){
-            return QLikeablePerson.likeablePerson.fromInstaMember.gender.eq(gender);
-        }
-        return null;
+        if(gender == null || gender.isBlank()) return null;
+
+        return QLikeablePerson.likeablePerson.fromInstaMember.gender.eq(gender);
     }
-
-
 
 }

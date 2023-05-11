@@ -224,30 +224,15 @@ public class LikeablePersonService {
     }
 
     public List<LikeablePerson> findAll (Long id, String gender, int attractiveTypeCode, int sortCode) {
-        Sort sort;
+        Sort sort =
         switch (sortCode) {
-            case 1:
-                sort = Sort.by(Sort.Direction.DESC, "createdAt");
-                break;
-            case 2:
-                sort = Sort.by(Sort.Direction.ASC, "date");
-                break;
-            case 3:
-                sort = Sort.by(Sort.Direction.DESC, "popularity");
-                break;
-            case 4:
-                sort = Sort.by(Sort.Direction.ASC, "popularity");
-                break;
-            case 5:
-                sort = Sort.by(Sort.Direction.DESC,"gender").and(Sort.by("W")).and(Sort.by("M"));
-                break;
-            case 6:
-                sort = Sort.by(Sort.Direction.DESC, "attractionReason").and(Sort.by(String.valueOf(attractiveTypeCode)));
-                break;
-            default:
-                sort = Sort.unsorted();
-                break;
-        }
+            case 2 -> sort = Sort.by("date").ascending();
+            case 3 -> sort = Sort.by("popularity").descending();
+            case 4 -> sort = Sort.by( "popularity").descending();
+            case 5 -> sort = Sort.by("gender").descending().and(Sort.by("id").descending());
+            case 6 -> sort = Sort.by( "attractionReason").ascending();
+            default -> sort = Sort.unsorted();
+        };
 
         return likeablePersonQueryDslRepository.findAllfromInstaMemberGender(id,gender,attractiveTypeCode, sort);
     }
