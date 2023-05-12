@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface LikeablePersonRepositoryCustom {
     Optional<LikeablePerson> findQslByFromInstaMemberIdAndToInstaMember_username(long fromInstaMemberId, String toInstaMemberUsername);
+
+
 }

@@ -130,42 +130,12 @@ public class LikeablePersonController {
         // 인스타인증을 했는지 체크
         if (instaMember != null) {
             // 해당 인스타회원이 좋아하는 사람들 목록
-            Stream<LikeablePerson> likeablePeopleStream = instaMember.getToLikeablePeople().stream();
-
-            if (gender != null) {
-                // likeablePeopleStream = likeablePeopleStream.filter();
-            }
-
-            if (attractiveTypeCode != 0) {
-                // likeablePeopleStream = likeablePeopleStream.filter();
-            }
-
-            switch (sortCode) {
-                case 1:
-                    // likeablePeopleStream = likeablePeopleStream.sorted(??);
-                    break;
-                case 2:
-                    // likeablePeopleStream = likeablePeopleStream.sorted(??);
-                    break;
-                case 3:
-                    // likeablePeopleStream = likeablePeopleStream.sorted(??);
-                    break;
-                case 4:
-                    // likeablePeopleStream = likeablePeopleStream.sorted(??);
-                    break;
-                case 5:
-                    // likeablePeopleStream = likeablePeopleStream.sorted(??);
-                    break;
-                case 6:
-                    // likeablePeopleStream = likeablePeopleStream.sorted(??);
-                    break;
-
-            }
-
-            List<LikeablePerson> likeablePeople = likeablePeopleStream.collect(Collectors.toList());
+            List<LikeablePerson> likeablePeople = likeablePersonService.findAll(instaMember.getId(), gender, attractiveTypeCode,sortCode);
 
             model.addAttribute("likeablePeople", likeablePeople);
+
         }
+
 
         return "usr/likeablePerson/toList";
     }

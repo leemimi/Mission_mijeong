@@ -109,6 +109,32 @@ public class InstaMemberControllerTests {
 
         assertThat(member.getInstaMember()).isEqualTo(instaMember);
     }
+//    @Test
+//    @DisplayName("인스타회원 정보 입력 폼 처리2")
+//    @WithUserDetails("user1015")
+//    void t035() throws Exception {
+//        // WHEN
+//        ResultActions resultActions = mvc
+//                .perform(post("/usr/instaMember/connect")
+//                        .with(csrf()) // CSRF 키 생성
+//                        .param("username", "mijeong")
+//                        .param("gender", "M")
+//                )
+//                .andDo(print());
+//
+//        // THEN
+//        resultActions
+//                .andExpect(handler().handlerType(InstaMemberController.class))
+//                .andExpect(handler().methodName("connect"))
+//                .andExpect(status().is3xxRedirection())
+//                .andExpect(redirectedUrlPattern("/usr/likeablePerson/like**"));
+//
+//        InstaMember instaMember = instaMemberService.findByUsername("mijeong").orElse(null);
+//
+//        Member member = memberService.findByUsername("user1015").orElseThrow();
+//
+//        assertThat(member.getInstaMember()).isEqualTo(instaMember);
+//    }
 
     @Test
     @DisplayName("인스타 아이디 입력, 이미 우리 시스템에 성별 U 로 등록되어 있는 경우")
